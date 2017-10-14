@@ -1,0 +1,30 @@
+{
+  "name": "scrape-it",
+  "version": "0.0.1",
+  "description": "Web scraping using scrape-it",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.15.3",
+    "scrape-it": "^3.3.2",
+    "osmosis": "^1.1.4",
+    "cheerio": "^0.22.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "x-ray": "^2.3.2",
+    "moment": "^2.18.1",
+    "superagent": "^3.5.2",
+    "superagent-charset": "^1.2.0"
+  },
+  "engines": {
+    "node": "6.11.1"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "scrape-it"
+  ],
+  "license": "MIT"
+}
