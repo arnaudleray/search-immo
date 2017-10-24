@@ -1,22 +1,28 @@
 {
-  "name": "scrape-it",
+  "name": "search-immo",
   "version": "0.0.1",
-  "description": "Web scraping using scrape-it",
+  "description": "Recherche immobilière par scraping",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.15.3",
-    "scrape-it": "^3.3.2",
-    "osmosis": "^1.1.4",
-    "cheerio": "^0.22.0",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.1",
-    "x-ray": "^2.3.2",
-    "moment": "^2.18.1",
+    "express": "^4.16.2",
+    "moment": "^2.19.1",
     "superagent": "^3.5.2",
-    "superagent-charset": "^1.2.0"
+    "superagent-charset": "^1.2.0",
+    "x-ray": "^2.3.2"
+  },
+  "hidden": {
+    "nightmare": "^2.10.0",
+    "express": "^4.15.3",
+    "moment": "^2.18.1",
+    "phantom": "^4.0.5",
+    "phantomjs-prebuilt": "^2.1.15",
+    "superagent": "^3.5.2",
+    "superagent-charset": "^1.2.0",
+    "x-ray": "^2.3.2",
+    "x-ray-phantom": "^1.0.1"
   },
   "engines": {
     "node": "6.11.1"

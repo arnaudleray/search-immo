@@ -9,17 +9,29 @@ var app = express();
 var moment = require('moment');
 var scrapedData;
 // var urlLocation = "https://www.leboncoin.fr/locations/offres/bretagne/?th=1&location=Noyal-sur-Vilaine%2035530&parrot=0&mre=850&sqs=7";
-var urlBuy = "https://www.leboncoin.fr/ventes_immobilieres/offres/bretagne/?th=1&location=Noyal-sur-Vilaine%2035530&parrot=0&pe=10&sqs=8";
-const scrapeIt = require("scrape-it");
-const osmosis = require('osmosis');
-var request = require('request');
-var cheerio = require('cheerio');
+var urlBuy = "https://www.leboncoin.fr/ventes_immobilieres/offres/bretagne/?th=1&location=Noyal-sur-Vilaine%2035530&parrot=0&pe=11&sqs=8";
+var urlSeLoger = 'http://www.seloger.com/list.htm?idtt=2&naturebien=1,2,4&idtypebien=1,2&ci=350207&tri=d_dt_crea&pxmax=270000&surfacemin=70';
+var urlKermarrec = 'http://www.kermarrec.fr/achat/maison/noyal-sur-vilaine-35530/?budgetmax=270000&from=simple';
+var urlLogic = 'http://www.logic-immo.com/vente-immobilier-noyal-sur-vilaine-35530,22810_2/options/pricemax=270000/areamin=70/order=update_date_desc';
+var scrapeIt = null; //require("scrape-it");
+var osmosis = null; //require('osmosis');
+var request = null; //require('request');
+var cheerio = null; //require('cheerio');
 var Xray = require('x-ray');
 var xrayDriver = require('./my-xray-driver');
+// var phantom = require('phantom');
+// var xrayPhantom = require('x-ray-phantom');
 var xrayConfig = {
   filters: {
     date: function (value, format) {
-      return moment(value, format);
+      let d = moment(value, format);
+      console.log('DATE', value, d);
+      if (!d.isValid()) {
+        // d = moment(new Date(), format);
+        d = value;
+        console.log('DATE MODIF', value, d);
+      }
+      return d;
     },
     price: function (value) {
       return typeof value === 'string' ? parseInt(value.replace(/[ ]/, ''), 10).toString().replace(/(\d{1,6})(\d{3})/, "$1&nbsp;$2") : value
@@ -37,6 +49,7 @@ var xrayConfig = {
 };
 var x = Xray(xrayConfig);
 var xWin = Xray(xrayConfig).driver(xrayDriver('Windows1252'));
+// var xPhantom = Xray().driver(xrayPhantom());
 
 // // Callback interface
 // scrapeIt(urlBuy, {
@@ -166,21 +179,22 @@ function scrapeLbcWithXRay(request, response) {
       price: '.item_price@content | price',
       thumbnail: '.lazyload@data-imgsrc',
       url: 'a@href',
-      details: xWin('a@href', {
-        description: '.properties_description .value@html'
-      })
+      // details: xWin('a@href', {
+      //   description: '.properties_description .value@html'
+      // })
   }])(function (err, results) {
     if (err) {
       console.log(err);
-      return;
+      response.status(500).json(err);
+      return err;
     }
     
     console.log(results);
     
     results.forEach(function (item) {
       item.src = 'LBC';
-      item.description = (item.details && item.details.description) ? item.details.description : undefined;
-      item.details = undefined;
+      // item.description = (item.details && item.details.description) ? item.details.description : undefined;
+      // item.details = undefined;
     });
     
     response.status(200).json(results);
@@ -228,15 +242,7 @@ function scrapeOuestImmoWithXRay(request, response) {
   var url = 'https://www.ouestfrance-immo.com/acheter/noyal-sur-vilaine-35-35530/?types=maison,appartement,demeure-exception&prix=0_250000&surface=70_0';
   console.log(url);
   x.driver(xrayDriver('utf-8'));
-  // x(url, {
-  //   title: 'title',
-  //   items: x('.listeAnn li', [{
-  //     date: '.date',
-  //     title: '.blocTxt h2 a',
-  //     price: '.prix div[1]',
-  //     thumbnail: '.photoAnn img@src',
-  //     url: '@href'
-  //   }])
+
   x(url, '.listeAnn li:not(.pubsInterPA)', [{
       date: '.date | trim | date:DD/MM/YYYY',
       title: '.blocTxt h2 a | trim',
@@ -343,22 +349,67 @@ function scrapeSeLogerWithOsmosis(request, response) {
 }
 
 
-function scrapeSeLogerWithXRay(request, response) {
+function scrapeSeLogerWithCheerio(req, resp) {
   var results = [];
-  var url = 'http://www.seloger.com/list.htm?idtt=2&naturebien=1,2,4&idtypebien=1,2&ci=350207&tri=d_dt_crea&pxmax=250000&surfacemin=70';
+  var url = urlSeLoger;
+
+  request({
+    url: url,
+    headers: {
+     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3196.0 Safari/537.36'
+    }
+  }, function (error, response, html) {
+    if (!error && response.statusCode == 200) {
+      // var $ = cheerio.load(html);
+      // results = [];
+      // $('.listeAnn li:not(.pubsInterPA)').each(function(i, element){
+      //   console.log('Cheerio ' + i);
+      //   var price = $(this).find('prix .visible-phone').text();
+      //   var title = $(this).find('.blocTxt h2 a').text().trim();
+      //   var thumbnail = $(this).find('.photoAnn img').attr('data-original');
+      //   //var nbImages = $(this).find('.item_imageNumber > span').text();
+      //   var url = $(this).find('[href]').attr('href');
+      //   var date = $(this).find('.date').text().trim();
+      //   //var timeArray = $(this).find('.item_price + .item_absolute > .item_supp').text().trim().split(' ')
+      //   //var time = timeArray[timeArray.length - 1];
+      //   // Our parsed meta data object
+      //   var metadata = {
+      //     date: new Date(date),
+      //     //time,
+      //     price: parseFloat(price),
+      //     thumbnail: thumbnail,
+      //     //nbImages: parseInt(nbImages, 10),
+      //     title,
+      //     url,
+      //     src: 'OUEST',
+      //   };
+      //   console.log(metadata);
+      //   results.push(metadata);
+      // });
+      resp.status(200).json(results);
+    } else {
+      console.log('Cheerio error: ' + response.statusCode + ' ' + error);
+      resp.status(200).json(results);
+    }
+  });
+}
+
+function scrapeSeLogerWithXray(request, response) {
+  var results = [];
+  var url = urlSeLoger;
   console.log(url);
   x.driver(xrayDriver('utf-8'));
   //   }])
-  x(url, '.liste_resultat article', [{
+  x(url, '.liste_resultat .c-pa-list', [{
       // date: '.date | trim | date:DD/MM/YYYY',
       // title: '.blocTxt h2 a | trim',
       // price: '.prix .visible-phone | price',
       // thumbnail: '.photoAnn img@data-original',
-      url: '.listing_infos a@href',
-      description: '.listing_infos'
-      // details: x('a@href', {
-      //   description: '.txtAnn@html'
-      // })
+      url: '.c-pa-info a@href',
+      // description: '.listing_infos'
+      details: x('.c-pa-info a@href', { // http://www.seloger.com/detail,json,caracteristique_bien.json?idannonce=114582789
+        description: '.description-bien@html'
+      })
   }])(function (err, results) {
     if (err) {
       console.log(err);
@@ -369,8 +420,8 @@ function scrapeSeLogerWithXRay(request, response) {
     
     results.forEach(function (item) {
       item.src = 'SELOGER';
-      // item.description = item.details.description;
-      // item.details = undefined;
+      item.description = item.details.description;
+      item.details = undefined;
     });
     
     //       if (currentRes.date) {
@@ -382,6 +433,69 @@ function scrapeSeLogerWithXRay(request, response) {
     //       results.push(currentRes);
     //     })
     //     .done(function () {
+    response.status(200).json(results);
+  });
+}
+
+function scrapeKermarrecWithXray(request, response) {
+  var results = [];
+  var url = urlKermarrec;
+  console.log(url);
+  xWin(url, '.result-list li', [{
+      date: '.item_price + .item_absolute > .item_supp@content',// | trim | date:DD/MM/YYYY',
+      title: '.item_title | trim',
+      price: '.item_price@content | price',
+      thumbnail: '.lazyload@data-imgsrc',
+      url: 'a@href',
+      // details: xWin('a@href', {
+      //   description: '.properties_description .value@html'
+      // })
+  }])(function (err, results) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    
+    console.log(results);
+    
+    results.forEach(function (item) {
+      item.src = 'KER';
+      // item.description = (item.details && item.details.description) ? item.details.description : undefined;
+      // item.details = undefined;
+    });
+    
+    response.status(200).json(results);
+  });
+}
+
+
+function scrapeLogicImmoWithXray(request, response) {
+  var results = [];
+  var url = urlLogic;
+  console.log(url);
+  x(url, '.offer-block', [{
+      date: '.offer-update | date:DD/MM/YYYY',
+      title: '.offer-type a@title | trim',
+      price: '.offer-price span | price',
+      thumbnail: '.lazy@data-original',
+      url: '.offer-type a@href',
+      // details: xWin('a@href', {
+        description: '.offer-description | trim'
+      // })
+  }])(function (err, results) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    
+    console.log(results);
+    
+    results.forEach(function (item) {
+      item.src = 'LOG';
+      // item.description = (item.details && item.details.description) ? item.details.description : undefined;
+      item.details = undefined;
+    });
+    
     response.status(200).json(results);
   });
 }
@@ -418,8 +532,20 @@ app.get("/seloger-osmosis", function (request, response) {
   scrapeSeLogerWithOsmosis(request, response);
 });
 
+app.get("/seloger-cheerio", function (request, response) {
+  scrapeSeLogerWithCheerio(request, response);
+});
+
 app.get("/seloger-xray", function (request, response) {
-  scrapeSeLogerWithXRay(request, response);
+  scrapeSeLogerWithXray(request, response);
+});
+
+app.get("/kermarrec-xray", function (request, response) {
+  scrapeKermarrecWithXray(request, response);
+});
+
+app.get("/logic-xray", function (request, response) {
+  scrapeLogicImmoWithXray(request, response);
 });
 
 app.get("/lbc-cheerio", function (request, response) {

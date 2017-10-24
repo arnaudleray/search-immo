@@ -6,7 +6,7 @@
   <head>
     <title>Résultats</title>
     <meta name="description" content="A cool scraper made with Scrape-it">
-    <link id="favicon" rel="icon" href="https://hyperdev.space/favicon.ico" type="image/x-icon">
+    <link id="favicon" rel="icon" href="http://www.icône.com/images/icones/6/0/go-home-5.png" type="image/x-icon">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,22 +14,35 @@
   </head>
 
   <body>
-
     <main>
       <section class="results">
         <ul id="results">
+          <div class="loading"><img style="margin-bottom:-9px; margin-right:10px" src="https://media.giphy.com/media/10kTz4r3ishQwU/giphy.gif" width="32">Chargement en cours...</div>
         </ul>
-      </section>
-      <section class="title">
-        <div id="title"></div>
-      </section>       
+      </section> 
     </main>
 
-    <a href="https://www.leboncoin.fr/ventes_immobilieres/offres/bretagne/?th=1&location=Noyal-sur-Vilaine%2035530&parrot=0&pe=10&sqs=8" target="">Le bon coin</a> |
-    <a href="https://www.ouestfrance-immo.com/acheter/noyal-sur-vilaine-35-35530/?types=maison,appartement,demeure-exception&prix=0_250000&surface=70_0" target="">Ouest Immo</a> |
-    <a href="http://www.seloger.com/list.htm?idtt=2&naturebien=1,2,4&idtypebien=1,2&ci=350207&tri=d_dt_crea&pxmax=250000&surfacemin=70" target="">Se Loger</a> |
-    <a href="http://nicolazo.notaires.fr/annonces-immobilieres-NICOLAZO-Marie-Pascale-NICOLAZO-Jerome.html?real_estate_ads_search%5BtypeTransactions%5D=VENTE&real_estate_ads_search%5BtypeBiens%5D=&real_estate_ads_search%5BnameLocalisation%5D=Noyal-sur-vilaine&real_estate_ads_search%5Blocalites%5D=&real_estate_ads_search%5BprixMin%5D=&real_estate_ads_search%5BprixMax%5D=250000&real_estate_ads_search%5BpieceMin%5D=&real_estate_ads_search%5BpieceMax%5D=&real_estate_ads_search%5BsurfaceMin%5D=70&real_estate_ads_search%5BsurfaceMax%5D=&real_estate_ads_search%5BsortBy%5D=newest_oldest&real_estate_ads_search%5BparPage%5D=20&real_estate_ads_search%5Bpage%5D=1&real_estate_ads_search%5BmsgErrorMinMax%5D=&real_estate_ads_search%5B_token%5D=akl2FSpDDN-mPU0cUCzVryayXOwWmI8kqKHQia_dEEQ" target="">Nicolazo</a>
-    <a href="https://glitch.com/edit/#!/search-immo?path=server.js">Edit</a>
+    <div class="dev">
+      <h3>
+        Pages
+      </h3>
+      <a class="links" href="https://www.leboncoin.fr/ventes_immobilieres/offres/bretagne/?th=1&location=Noyal-sur-Vilaine%2035530&parrot=0&pe=10&sqs=8">Le bon coin</a> |
+      <a class="links" href="https://www.ouestfrance-immo.com/acheter/noyal-sur-vilaine-35-35530/?types=maison,appartement,demeure-exception&prix=0_250000&surface=70_0">Ouest Immo</a> |
+      <a class="links" href="http://www.seloger.com/list.htm?idtt=2&naturebien=1,2,4&idtypebien=1,2&ci=350207&tri=d_dt_crea&pxmax=250000&surfacemin=70">Se Loger</a> |
+      <a class="links" href="http://nicolazo.notaires.fr/annonces-immobilieres-NICOLAZO-Marie-Pascale-NICOLAZO-Jerome.html?real_estate_ads_search%5BtypeTransactions%5D=VENTE&real_estate_ads_search%5BtypeBiens%5D=&real_estate_ads_search%5BnameLocalisation%5D=Noyal-sur-vilaine&real_estate_ads_search%5Blocalites%5D=&real_estate_ads_search%5BprixMin%5D=&real_estate_ads_search%5BprixMax%5D=270000&real_estate_ads_search%5BpieceMin%5D=&real_estate_ads_search%5BpieceMax%5D=&real_estate_ads_search%5BsurfaceMin%5D=70&real_estate_ads_search%5BsurfaceMax%5D=&real_estate_ads_search%5BsortBy%5D=newest_oldest&real_estate_ads_search%5BparPage%5D=20&real_estate_ads_search%5Bpage%5D=1&real_estate_ads_search%5BmsgErrorMinMax%5D=&real_estate_ads_search%5B_token%5D=akl2FSpDDN-mPU0cUCzVryayXOwWmI8kqKHQia_dEEQ">Nicolazo</a> |
+      <a class="links" href="http://www.logic-immo.com/vente-immobilier-noyal-sur-vilaine-35530,22810_2/options/pricemax=250000/areamin=70/order=update_date_desc">Logic Immo</a>
+
+      <h3>
+        API
+      </h3>
+      <a class="links" href="https://search-immo.glitch.me/lbc-xray">API Le bon coin</a> |
+      <a class="links" href="https://search-immo.glitch.me/ouest-xray">API Ouest Immo</a> |
+      <a class="links" href="https://search-immo.glitch.me/seloger-xray">API Se loger</a> |
+      <a class="links" href="https://search-immo.glitch.me/kermarrec-xray">API Kermarrec</a> |
+      <a class="links" href="https://search-immo.glitch.me/logic-xray">API Logic Immo</a>
+      <br/><br/>
+      <a class="links" href="https://glitch.com/edit/#!/search-immo?path=server.js">Edit</a><br/>
+    </div>
 
     <!-- Your web-app is https, so your scripts need to be too -->
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"
